@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Timer</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        .options li {
+            background: #fff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        .options li:hover, .options li.selected {
+            background: #d4edda;
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz</h1>
+        <p class="timer">Time Left: <span id="time">10:00</span></p>
+        <div id="quiz"></div>
+        <button onclick="submitQuiz()">Submit</button>
+        <p id="result" class="hidden"></p>
+    </div>
+
+    <script>
+        let questions = [
+        { q: "What is the time complexity of binary search?", options: ["O(n)", "O(log n)", "O(n log n)", "O(1)"], answer: 1 },
+        { q: "Which programming paradigm does Java follow?", options: ["Procedural", "Functional", "Object-Oriented", "Logic-based"], answer: 2 },
+        { q: "What does API stand for?", options: ["Application Programming Interface", "Automated Processing Information", "Advanced Protocol Integration", "Application Process Interface"], answer: 0 },
+        { q: "Which of these is NOT a sorting algorithm?", options: ["Bubble Sort", "Merge Sort", "Heap Sort", "Depth Sort"], answer: 3 },
+        { q: "Which is the fastest data structure for lookups?", options: ["Array", "Linked List", "Hash Table", "Stack"], answer: 2 },
+    
+        { q: "Which of these is a NoSQL database?", options: ["PostgreSQL", "MongoDB", "OracleDB", "MySQL"], answer: 1 },
+        { q: "Which company developed the C programming language?", options: ["Apple", "Bell Labs", "Microsoft", "Google"], answer: 1 },
+        { q: "What is the primary function of a firewall?", options: ["Speed up the internet", "Block unauthorized access", "Increase bandwidth", "Store passwords"], answer: 1 },
+        { q: "What is the default port for HTTP?", options: ["21", "25", "80", "443"], answer: 2 },
+        { q: "Which algorithm is used in public-key cryptography?", options: ["AES", "RSA", "SHA-256", "MD5"], answer: 1 }
+    ];
+        
+        let userAnswers = Array(questions.length).fill(null);
+        let timeLeft = 45; 
+        let timer = setInterval(() => {
+            timeLeft--;
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("time").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                submitQuiz();
+            }
+        }, 1000);
+        
+        function loadQuiz() {
+            let quizDiv = document.getElementById("quiz");
+            quizDiv.innerHTML = "";
+            questions.forEach((q, index) => {
+                let questionHTML = `<div class='question'>${index + 1}. ${q.q}</div>`;
+                questionHTML += "<ul class='options'>";
+                q.options.forEach((option, i) => {
+                    questionHTML += `<li onclick="selectAnswer(${index}, ${i})">${option}</li>`;
+                });
+                questionHTML += "</ul>";
+                quizDiv.innerHTML += questionHTML;
+            });
+        }
+        
+        function selectAnswer(questionIndex, optionIndex) {
+            userAnswers[questionIndex] = optionIndex;
+            let options = document.querySelectorAll(`.options:nth-of-type(${questionIndex + 1}) li`);
+            options.forEach(option => option.style.background = "#fff");
+            options[optionIndex].style.background = "#c3e6cb"; // Highlight selected answer
+        }
+        
+        function submitQuiz() {
+            clearInterval(timer);
+            let score = 0;
+
+            questions.forEach((q, index) => {
+                let options = document.querySelectorAll(`.options:nth-of-type(${index + 1}) li`);
+                let questionElement = document.querySelectorAll('.question')[index];
+                if (userAnswers[index] !== null) {
+                    if (userAnswers[index] === q.answer) {
+                        score++;
+                        options[userAnswers[index]].style.background = "#28a745"; // Correct answer in green
+                    } else {
+                        options[userAnswers[index]].style.background = "#dc3545"; // Incorrect answer in red
+                        options[q.answer].style.background = "#28a745"; // Correct answer in green
+                    }
+                } else {
+                    let notAttendedPacket = document.createElement("span");
+                    notAttendedPacket.innerText = "Not Attended";
+                    notAttendedPacket.style.color = "#007bff"; // Blue color for not attended
+                    notAttendedPacket.style.marginLeft = "10px";
+                    notAttendedPacket.style.padding = "5px 10px";
+                    notAttendedPacket.style.border = "1px solid #007bff";
+                    notAttendedPacket.style.borderRadius = "5px";
+                    notAttendedPacket.style.fontSize = "14px";
+                    questionElement.appendChild(notAttendedPacket);
+                    options[q.answer].style.background = "#28a745"; // Highlight correct answer in green
+                }
+            });
+
+            finalScore = score;
+
+            document.getElementById("result").innerText = `Your Score: ${score}/${questions.length}`;
+            document.getElementById("result").classList.remove("hidden");
+        }
+        
+        loadQuiz();
+    </script>
+</body>
+</html>

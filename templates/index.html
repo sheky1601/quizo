@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Index Page</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='indexstyles.css')}}" >
+    <!-- Ensure the path is correct -->
+    <style>
+      body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #008080; /* Teal background color */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white; /* White background for the container */
+    padding: 60px; /* Consistent padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    width: 300px;
+    text-align: center;
+}
+
+.container:hover {
+    transform: scale(1.05); /* Slightly enlarge the container on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Add a deeper shadow on hover */
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #66b2b2; /* Teal button color */
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #008B8B; /* Darker teal on hover */
+}
+
+p {
+    margin-top: 15px;
+}
+
+a {
+    color: #20B2AA; /* Teal link color */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 80%;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: auto;
+      }
+      h1,
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      p {
+        color: #333;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .message {
+        margin-top: 15px;
+        text-align: center;
+      }
+      .message a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .message a:hover {
+        text-decoration: underline;
+      }
+      .input-group {
+        margin-bottom: 15px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        color: #333;
+        font-weight: bold;
+        align-self: flex-start;
+        margin-bottom: 5px; /* Adds spacing between label and input */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome</h1>
+      <h2>Please Sign In</h2>
+      <form action="/index" method="post">
+        <label for="username">Username</label> 
+        <input type="text" placeholder="Username" name="username"/> 
+        <label for="email">Email</label>
+        <input type="email" placeholder="Email" name="email"/>
+        <label for="password">Password</label>
+        <input type="password" placeholder="Password" name="password"/>
+        <button type="submit">Sign In</button>
+      </form>
+      <p>Already have account ? <a href="/login">login</a></p>
+    </div>
+  </body>
+</html>

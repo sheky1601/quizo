@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Timer</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        .options li {
+            background: #fff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        .options li:hover {
+            background: #d4edda;
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz</h1>
+        <p class="timer">Time Left: <span id="time">10:00</span></p>
+        <div id="quiz"></div>
+        <button onclick="submitQuiz()">Submit</button>
+        <p id="result" class="hidden"></p>
+        <button id="nextRound" class="hidden" onclick="startNextRound()">Next Round</button>
+        <button id="retryQuiz" class="hidden" onclick="retryQuiz()">Retry Quiz</button>
+    </div>
+
+    <script>
+        let questions = [
+        { q: "What planet is known as the Blue Planet?", options: ["Mars", "Venus", "Earth", "Neptune"], answer: 2 },
+    { q: "What gas do humans breathe in?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"], answer: 0 },
+    { q: "What is the hardest known natural material?", options: ["Gold", "Diamond", "Iron", "Silver"], answer: 1 },
+    { q: "What does H2O stand for?", options: ["Oxygen", "Hydrogen", "Water", "Carbon Dioxide"], answer: 2 },
+    { q: "What force keeps us on Earth?", options: ["Magnetism", "Friction", "Gravity", "Tension"], answer: 2 },
+      
+    { q: "What is the closest planet to the Sun?", options: ["Earth", "Venus", "Mercury", "Mars"], answer: 2 },
+    { q: "Which part of the plant absorbs water?", options: ["Leaves", "Roots", "Stem", "Flowers"], answer: 1 },
+    { q: "What is the process by which plants make their own food?", options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"], answer: 1 },
+    { q: "Which organ pumps blood in the human body?", options: ["Lungs", "Heart", "Brain", "Liver"], answer: 1 },
+    { q: "What is the boiling point of water in Celsius?", options: ["90°C", "100°C", "120°C", "150°C"], answer: 1 }
+    ];
+
+        let timeLeft = 45; 
+        let timer = setInterval(() => {
+            timeLeft--;
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("time").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                submitQuiz();
+            }
+        }, 1000);
+
+        function loadQuiz() {
+            let quizDiv = document.getElementById("quiz");
+            quizDiv.innerHTML = "";
+            questions.forEach((q, index) => {
+                let questionHTML = `<div class='question'>${index + 1}. ${q.q}</div>`;
+                questionHTML += "<ul class='options'>";
+                q.options.forEach((option, i) => {
+                    questionHTML += `<li onclick="selectAnswer(${index}, ${i})">${option}</li>`;
+                });
+                questionHTML += "</ul>";
+                quizDiv.innerHTML += questionHTML;
+            });
+        }
+
+        let userAnswers = Array(questions.length).fill(null);
+        let finalScore = 0; 
+
+        function selectAnswer(questionIndex, optionIndex) {
+            userAnswers[questionIndex] = optionIndex;
+            let options = document.querySelectorAll(`.options:nth-of-type(${questionIndex + 1}) li`);
+            options.forEach(option => option.style.background = "#fff");
+            options[optionIndex].style.background = "#c3e6cb"; // Highlight selected answer
+        }
+
+        function submitQuiz() {
+            clearInterval(timer);
+            let score = 0;
+
+            questions.forEach((q, index) => {
+                let options = document.querySelectorAll(`.options:nth-of-type(${index + 1}) li`);
+                let questionElement = document.querySelectorAll('.question')[index];
+                if (userAnswers[index] !== null) {
+                    if (userAnswers[index] === q.answer) {
+                        score++;
+                        options[userAnswers[index]].style.background = "#28a745"; // Correct answer in green
+                    } else {
+                        options[userAnswers[index]].style.background = "#dc3545"; // Incorrect answer in red
+                        options[q.answer].style.background = "#28a745"; // Correct answer in green
+                    }
+                } else {
+                    let notAttendedPacket = document.createElement("span");
+                    notAttendedPacket.innerText = "Not Attended";
+                    notAttendedPacket.style.color = "#007bff"; // Blue color for not attended
+                    notAttendedPacket.style.marginLeft = "10px";
+                    notAttendedPacket.style.padding = "5px 10px";
+                    notAttendedPacket.style.border = "1px solid #007bff";
+                    notAttendedPacket.style.borderRadius = "5px";
+                    notAttendedPacket.style.fontSize = "14px";
+                    questionElement.appendChild(notAttendedPacket);
+                    options[q.answer].style.background = "#28a745"; // Highlight correct answer in green
+                }
+            });
+
+            finalScore = score;
+
+            document.getElementById("result").innerText = `Your Score: ${score}/10`;
+            document.getElementById("result").classList.remove("hidden");
+
+            if (score < 5) {
+                document.getElementById("retryQuiz").classList.remove("hidden");
+            } else {
+                document.getElementById("nextRound").classList.remove("hidden");
+            }
+        }
+
+        function startNextRound() {
+            alert("Starting next round...");
+
+            if (finalScore === 6||finalScore === 7||finalScore === 5) {
+                window.location.href = "sci6.html"; 
+            } else if (finalScore >= 7) {
+                window.location.href = "sci7.html"; 
+            } else {
+                alert("Your score is below 5. Please retry the quiz.");
+                location.reload();
+            }
+        }
+
+        function retryQuiz() {
+            alert("Retrying quiz...");
+            location.reload();
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>
