@@ -1,2 +1,2 @@
 # quizo
-base don iq
+based on iq level
